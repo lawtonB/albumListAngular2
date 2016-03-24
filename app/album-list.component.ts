@@ -4,13 +4,14 @@ import { NewAlbumComponent} from './new-album.component';
 import { AlbumComponent} from './album.component';
 import { GenrePipe } from './genre.pipe';
 import { ArtistPipe } from './artist.pipe';
+import { CheckoutPipe } from './checkout.pipe';
 
 @Component({
   selector: "album-list",
   inputs: ['albumList'],
   outputs: ['onAlbumSelect'],
   directives: [NewAlbumComponent, AlbumComponent],
-  pipes: [GenrePipe, ArtistPipe],
+  pipes: [GenrePipe, ArtistPipe, CheckoutPipe],
   template: `
   <select (change)="onChangeGenre($event.target.value)">
       <option value="all" selected="selected">All</option>
@@ -24,7 +25,11 @@ import { ArtistPipe } from './artist.pipe';
       <option value="metallica">Metallica</option>
       <option value="they might be giants">They Might Be Giants</option>
   </select>
-  <album-display *ngFor="#currentAlbum of albumList | artist: filter | genre: filter"
+  <select (change)="onChangeCheckout($event.target.value)">
+      <option value="all" selected="selected">All</option>
+      <option value="checkout">Checkout</option>
+  </select>
+  <album-display *ngFor="#currentAlbum of albumList | artist: filter | genre: filter | checkout: filter"
   (click)="albumClicked(currentAlbum)"
   [class.selected]='currentAlbum === selectedAlbum'
   [currentAlbum]="currentAlbum">
@@ -38,7 +43,7 @@ export class AlbumListComponent {
   public filter: string = "all";
   public selectedAlbum: Album;
   public onAlbumSelect: EventEmitter<Album>;
-  
+
   constructor(){
     this.onAlbumSelect = new EventEmitter();
   }
@@ -51,6 +56,9 @@ export class AlbumListComponent {
   }
   onChangeArtist(artistOption){
     this.filter = artistOption;
+  }
+  onChangeCheckout(checkoutOption){
+    this.filter = checkoutOption;
   }
   albumClicked(clickedAlbum: Album): void {
     console.log("child", clickedAlbum);
