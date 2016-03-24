@@ -1,14 +1,15 @@
 import { Component, EventEmitter } from 'angular2/core';
 import { Album } from './album.model';
 import { NewAlbumComponent} from './new-album.component';
-import {GenrePipe} from './genre.pipe';
-import {ArtistPipe} from './artist.pipe';
+import { AlbumComponent} from './album.component';
+import { GenrePipe } from './genre.pipe';
+import { ArtistPipe } from './artist.pipe';
 
 @Component({
   selector: "album-list",
   inputs: ['albumList'],
   outputs: ['onAlbumSelect'],
-  directives: [NewAlbumComponent],
+  directives: [NewAlbumComponent, AlbumComponent],
   pipes: [GenrePipe, ArtistPipe],
   template: `
   <select (change)="onChangeGenre($event.target.value)">
@@ -23,30 +24,23 @@ import {ArtistPipe} from './artist.pipe';
       <option value="metallica">Metallica</option>
       <option value="they might be giants">They Might Be Giants</option>
   </select>
-  <div *ngFor="#album of albumList | artist: filter | genre: filter"
-  (click)="albumClicked(album)"
-  [class.selected]='album === selectedAlbum'>
-    <h4> {{ album.name }} </h4>
-    <h4> {{ album.artist }} </h4>
-    <h4> {{ album.price }} </h4>
-    <h4> {{ album.genre }} </h4>
-  </div>
+  <album-display *ngFor="#currentAlbum of albumList | artist: filter | genre: filter"
+  (click)="albumClicked(currentAlbum)"
+  [class.selected]='currentAlbum === selectedAlbum'
+  [currentAlbum]="currentAlbum">
+  </album-display>
   <new-album (onSubmitNewAlbum)='createAlbum($event)'></new-album>
   `
 })
 
 export class AlbumListComponent {
   public albumList: Album[];
-  public onAlbumSelect: EventEmitter<Album>;
-  public selectedAlbum: Album;
   public filter: string = "all";
+  public selectedAlbum: Album;
+  public onAlbumSelect: EventEmitter<Album>;
+  
   constructor(){
     this.onAlbumSelect = new EventEmitter();
-  }
-  albumClicked(clickedAlbum: Album): void {
-    console.log("child", clickedAlbum);
-    this.selectedAlbum = clickedAlbum;
-    this.onAlbumSelect.emit(clickedAlbum);
   }
   createAlbum(tempAlbum: Album): void {
     this.albumList.push(new Album(tempAlbum.name, tempAlbum.artist, tempAlbum.price, tempAlbum.genre, this.albumList.length)
@@ -57,5 +51,10 @@ export class AlbumListComponent {
   }
   onChangeArtist(artistOption){
     this.filter = artistOption;
+  }
+  albumClicked(clickedAlbum: Album): void {
+    console.log("child", clickedAlbum);
+    this.selectedAlbum = clickedAlbum;
+    this.onAlbumSelect.emit(clickedAlbum);
   }
 }
