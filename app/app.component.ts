@@ -20,9 +20,9 @@ export class AppComponent {
   public albums: Album[];
   constructor(){
     this.albums = [
-      new Album("sign of the times", "prince", 10.99, "rock"),
-      new Album("master of puppets", "metallica", 8.99, "hard-rock"),
-      new Album("flood", "they might be giants", 6.99, "indie")
+      new Album("sign of the times", "prince", 10.99, "rock", 0),
+      new Album("master of puppets", "metallica", 8.99, "hard-rock", 1),
+      new Album("flood", "they might be giants", 6.99, "indie", 2)
     ];
   }
 
